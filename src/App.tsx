@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { AppStateProvider, useAppState } from './state/AppStateContext';
 import { LoadingScreen } from './screens/auth/LoadingScreen';
 import { LoginScreen } from './screens/auth/LoginScreen';
@@ -29,6 +30,84 @@ import { LessonGuideModal } from './screens/overlays/LessonGuideModal';
 
 function PolyMathRouter() {
   const { screen, overlay } = useAppState();
+  const columnRef = useRef<HTMLDivElement>(null);
+
+  // Prevent iOS Safari / standalone PWA elastic rubber-band stretch at scroll boundaries
+  useEffect(() => {
+    const root = columnRef.current;
+    if (!root) return;
+
+    let lastY = 0;
+    let lastX = 0;
+
+    const findScrollableY = (target: EventTarget | null): HTMLElement | null => {
+      let node = target instanceof HTMLElement ? target : null;
+      while (node && node !== root) {
+        const style = window.getComputedStyle(node);
+        const canScrollY =
+          (style.overflowY === 'auto' || style.overflowY === 'scroll') &&
+          node.scrollHeight > node.clientHeight + 1;
+        if (canScrollY) return node;
+        node = node.parentElement;
+      }
+      return null;
+    };
+
+    const isHorizontalScroller = (target: EventTarget | null): boolean => {
+      let node = target instanceof HTMLElement ? target : null;
+      while (node && node !== root) {
+        const style = window.getComputedStyle(node);
+        if (
+          (style.overflowX === 'auto' || style.overflowX === 'scroll') &&
+          node.scrollWidth > node.clientWidth + 1
+        ) {
+          return true;
+        }
+        node = node.parentElement;
+      }
+      return false;
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      lastY = e.touches[0].clientY;
+      lastX = e.touches[0].clientX;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      const curY = e.touches[0].clientY;
+      const curX = e.touches[0].clientX;
+      const dy = curY - lastY;
+      const dx = curX - lastX;
+      lastY = curY;
+      lastX = curX;
+
+      if (Math.abs(dx) > Math.abs(dy) && isHorizontalScroller(e.target)) {
+        return;
+      }
+
+      const scroller = findScrollableY(e.target);
+      if (!scroller) {
+        e.preventDefault();
+        return;
+      }
+
+      const atTop = scroller.scrollTop <= 0;
+      const atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1;
+
+      if ((dy > 0 && atTop) || (dy < 0 && atBottom)) {
+        e.preventDefault();
+      }
+    };
+
+    root.addEventListener('touchstart', onTouchStart, { passive: true });
+    root.addEventListener('touchmove', onTouchMove, { passive: false });
+    return () => {
+      root.removeEventListener('touchstart', onTouchStart);
+      root.removeEventListener('touchmove', onTouchMove);
+    };
+  }, []);
 
   const renderScreen = () => {
     switch (screen) {
@@ -100,7 +179,7 @@ function PolyMathRouter() {
 
   return (
     <div className="app-stage">
-      <div className="app-column">
+      <div ref={columnRef} className="app-column">
         {renderScreen()}
         {renderOverlay()}
       </div>

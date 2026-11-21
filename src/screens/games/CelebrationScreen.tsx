@@ -33,7 +33,7 @@ export function CelebrationScreen() {
   };
 
   return (
-    <div className="bg-gradient-to-b from-[#fffdf9] via-[#faf8ff] to-[#f5f3ff] flex flex-col justify-between h-full w-full px-[20px] pt-[28px] pb-[24px] overflow-y-auto no-scrollbar">
+    <div className="bg-gradient-to-b from-[#fffdf9] via-[#faf8ff] to-[#f5f3ff] flex flex-col justify-between h-full w-full px-[20px] safe-top safe-bottom overflow-y-auto scroll-contain no-scrollbar">
       {/* Header */}
       <div className="flex items-center justify-between shrink-0">
         <div className="bg-white border-2 border-[#cbc3d7] drop-shadow-[0px_2px_0px_#cbc3d7] rounded-full px-[14px] py-[6px] flex items-center gap-[6px]">

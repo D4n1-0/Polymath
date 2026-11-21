@@ -10,7 +10,7 @@ export function LessonGuideModal() {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="animate-sheet-up bg-white border border-[#e2e8f0] rounded-t-[28px] px-[20px] pt-[14px] pb-[28px] shadow-[0px_-6px_24px_0px_rgba(13,20,41,0.16)] flex flex-col gap-[16px]"
+        className="animate-sheet-up bg-white border border-[#e2e8f0] rounded-t-[28px] px-[20px] pt-[14px] safe-bottom shadow-[0px_-6px_24px_0px_rgba(13,20,41,0.16)] flex flex-col gap-[16px]"
       >
         <div className="flex justify-center">
           <div className="bg-[#e2e8f0] h-[4px] w-[40px] rounded-full" />

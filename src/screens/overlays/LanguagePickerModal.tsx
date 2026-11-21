@@ -75,7 +75,7 @@ export function LanguagePickerModal() {
           </div>
         </div>
 
-        <div className="overflow-y-auto no-scrollbar px-[20px] py-[8px] flex flex-col gap-[10px] max-h-[260px]">
+        <div className="overflow-y-auto scroll-contain no-scrollbar px-[20px] py-[8px] flex flex-col gap-[10px] max-h-[260px]">
           {filtered.map((lang) => {
             const isSelected = lang.id === selectedId;
             return (
@@ -116,7 +116,7 @@ export function LanguagePickerModal() {
           })}
         </div>
 
-        <div className="border-t border-[#cbc3d7]/30 px-[20px] pt-[13px] pb-[24px]">
+        <div className="border-t border-[#cbc3d7]/30 px-[20px] pt-[13px] safe-bottom">
           <button
             type="button"
             onClick={handleSave}

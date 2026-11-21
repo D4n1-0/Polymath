@@ -19,7 +19,7 @@ export function RegisterSsoUsernameScreen() {
   };
 
   return (
-    <div className="bg-white flex flex-col justify-between h-full w-full px-[20px] pt-[28px] pb-[20px]">
+    <div className="bg-white flex flex-col justify-between h-full w-full px-[20px] safe-top safe-bottom">
       <div className="flex flex-col gap-[16px]">
         <AuthHeader onBack={() => navigate('register-method')} />
 

@@ -12,7 +12,7 @@ export function AllBadgesScreen() {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="animate-sheet-up bg-white border border-[#e2e8f0] rounded-t-[28px] px-[20px] pt-[14px] pb-[24px] shadow-[0px_-6px_24px_0px_rgba(13,20,41,0.16)] flex flex-col gap-[14px] max-h-[84%]"
+        className="animate-sheet-up bg-white border border-[#e2e8f0] rounded-t-[28px] px-[20px] pt-[14px] safe-bottom shadow-[0px_-6px_24px_0px_rgba(13,20,41,0.16)] flex flex-col gap-[14px] max-h-[84%]"
       >
         <div className="flex justify-center shrink-0">
           <div className="bg-[#e2e8f0] h-[4px] w-[40px] rounded-full" />
@@ -43,7 +43,7 @@ export function AllBadgesScreen() {
           </button>
         </div>
 
-        <div className="overflow-y-auto no-scrollbar flex flex-col gap-[10px] pr-[2px]">
+        <div className="overflow-y-auto scroll-contain no-scrollbar flex flex-col gap-[10px] pr-[2px]">
           {ALL_BADGES.map((badge) => (
             <div
               key={badge.id}

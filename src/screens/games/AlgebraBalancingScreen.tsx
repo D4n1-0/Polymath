@@ -73,7 +73,7 @@ export function AlgebraBalancingScreen() {
   };
 
   return (
-    <div className="bg-[#faf8ff] flex flex-col justify-between h-full w-full px-[20px] pt-[24px] pb-[18px] overflow-y-auto no-scrollbar">
+    <div className="bg-[#faf8ff] flex flex-col justify-between h-full w-full px-[20px] safe-top safe-bottom overflow-y-auto scroll-contain no-scrollbar">
       <div className="flex flex-col gap-[10px]">
         {/* Top HUD */}
         <div className="flex items-center gap-[12px] w-full">

@@ -71,7 +71,7 @@ export function SpeedSprintScreen() {
   };
 
   return (
-    <div className="bg-[#faf8ff] flex flex-col justify-between h-full w-full px-[20px] pt-[28px] pb-[20px] overflow-y-auto no-scrollbar">
+    <div className="bg-[#faf8ff] flex flex-col justify-between h-full w-full px-[20px] safe-top safe-bottom overflow-y-auto scroll-contain no-scrollbar">
       <div className="flex flex-col gap-[18px]">
         {/* Top Chrome */}
         <div className="flex items-center gap-[12px] w-full">

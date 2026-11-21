@@ -48,7 +48,7 @@ export function AppShell({ activeTab, children }: AppShellProps) {
   return (
     <div className="flex flex-col h-full w-full bg-white relative">
       {/* Top Sticky Header */}
-      <header className="bg-white flex items-center justify-between pt-[28px] pb-[12px] px-[18px] shrink-0 z-10 border-b border-[#f1f5f9]">
+      <header className="bg-white safe-top pb-[10px] px-[18px] flex items-center justify-between shrink-0 z-10 border-b border-[#f1f5f9]">
         <div className="flex items-center gap-[6px]">
           <span className="font-jakarta font-extrabold text-[17px] tracking-[-0.4px] leading-[24px] text-[#6b38d4]">
             PolyMath
@@ -114,14 +114,14 @@ export function AppShell({ activeTab, children }: AppShellProps) {
       </header>
 
       {/* Scrollable Tab Body */}
-      <main className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-[20px] pt-[14px] pb-[106px]">
+      <main className="flex-1 min-h-0 overflow-y-auto scroll-contain no-scrollbar px-[20px] pt-[12px] pb-[108px]">
         {children}
       </main>
 
       {/* Bottom Floating Liquid Glass Navigation Bar */}
       <nav
         aria-label="Primary Navigation"
-        className="liquid-glass-nav absolute bottom-[16px] left-[20px] right-[20px] h-[68px] rounded-[24px] flex items-center justify-around px-[8px] z-20"
+        className="liquid-glass-nav safe-nav-bottom absolute left-[20px] right-[20px] h-[68px] rounded-[24px] flex items-center justify-around px-[8px] z-20"
       >
         {navItems.map((item) => {
           const isActive = activeTab === item.key;

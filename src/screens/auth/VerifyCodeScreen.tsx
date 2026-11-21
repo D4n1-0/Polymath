@@ -42,7 +42,7 @@ export function VerifyCodeScreen() {
   };
 
   return (
-    <div className="bg-white flex flex-col justify-between h-full w-full px-[20px] pt-[28px] pb-[20px] overflow-y-auto no-scrollbar">
+    <div className="bg-white flex flex-col justify-between h-full w-full px-[20px] safe-top safe-bottom overflow-y-auto scroll-contain no-scrollbar">
       <div className="flex flex-col gap-[16px]">
         <AuthHeader onBack={() => navigate('register-email-form')} />
 
