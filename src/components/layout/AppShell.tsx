@@ -48,7 +48,7 @@ export function AppShell({ activeTab, children }: AppShellProps) {
   return (
     <div className="flex flex-col h-full w-full bg-white relative">
       {/* Top Sticky Header */}
-      <header className="bg-white safe-top pb-[10px] px-[18px] flex items-center justify-between shrink-0 z-10 border-b border-[#f1f5f9]">
+      <header className="bg-white safe-top pb-[8px] px-[18px] flex items-center justify-between shrink-0 z-10 border-b border-[#f1f5f9]">
         <div className="flex items-center gap-[6px]">
           <span className="font-jakarta font-extrabold text-[17px] tracking-[-0.4px] leading-[24px] text-[#6b38d4]">
             PolyMath
@@ -64,7 +64,7 @@ export function AppShell({ activeTab, children }: AppShellProps) {
               playTone('tap');
               openOverlay('settings-sidebar');
             }}
-            className="tactile-btn bg-white border-2 border-[#dae2fd] drop-shadow-[0px_3px_0px_#dae2fd] rounded-[12px] size-[44px] flex items-center justify-center cursor-pointer"
+            className="tactile-btn bg-white border-2 border-[#dae2fd] drop-shadow-[0px_3px_0px_#dae2fd] rounded-[12px] size-[40px] flex items-center justify-center cursor-pointer"
           >
             <img alt="" src={settingsGearSvg} className="size-[18px]" />
           </button>

@@ -11,7 +11,7 @@ export function AuthHeader({ onBack, showLanguage = true }: AuthHeaderProps) {
   const { languageCode, openOverlay, playTone } = useAppState();
 
   return (
-    <header className="flex items-center justify-between pt-[4px] pb-[12px] w-full shrink-0">
+    <header className="flex items-center justify-between pb-[10px] w-full shrink-0">
       <div className="flex items-center gap-[9px]">
         {onBack && (
           <button

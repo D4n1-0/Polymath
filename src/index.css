@@ -36,7 +36,7 @@
 
 /* Safe-area utilities for iOS standalone PWA & desktop preview */
 .safe-top {
-  padding-top: max(14px, env(safe-area-inset-top));
+  padding-top: max(12px, calc(env(safe-area-inset-top) - 16px));
 }
 
 .safe-bottom {
