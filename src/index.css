@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono-display: 'Space Grotesk', sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-sans);
+    background-color: #f3f1f8;
+    color: #131b2e;
+  }
+}
+
+.font-jakarta {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.font-space {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* Centered 440x956 mobile column on desktop without bezel or external controls; full-bleed on mobile */
+.app-stage {
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f3f1f8;
+}
+
+.app-column {
+  width: 100%;
+  max-width: 440px;
+  height: 100dvh;
+  max-height: 956px;
+  background-color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px rgba(19, 27, 46, 0.08);
+}
+
+@media (max-width: 480px) {
+  .app-stage {
+    background-color: #ffffff;
+    align-items: stretch;
+  }
+  .app-column {
+    max-width: 100%;
+    max-height: none;
+    height: 100dvh;
+    box-shadow: none;
+  }
+}
+
+:root {
+  --in-oklab: ;
+}
+
+@supports (background: linear-gradient(in oklab, white, black)) {
+  :root {
+    --in-oklab: in oklab;
+  }
+}
+
+/* Figma Liquid Glass navbar (Fill #F4F1F1 30%, Frost ~49, Light -45deg) */
+.liquid-glass-nav {
+  isolation: isolate;
+  background-color: rgba(244, 241, 241, 0.34);
+  background-image: linear-gradient(
+    135deg var(--in-oklab),
+    rgba(255, 255, 255, 0.58) 0%,
+    rgba(244, 241, 241, 0.22) 48%,
+    rgba(255, 255, 255, 0.34) 100%
+  );
+  -webkit-backdrop-filter: blur(22px) saturate(185%) brightness(1.04);
+  backdrop-filter: blur(22px) saturate(185%) brightness(1.04);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow:
+    inset 0 1.5px 1px rgba(255, 255, 255, 0.92),
+    inset 0 -1px 2px rgba(107, 56, 212, 0.08),
+    0 12px 30px rgba(19, 27, 46, 0.14),
+    0 2px 8px rgba(107, 56, 212, 0.08);
+}
+
+@supports (background-color: color-mix(in oklab, white 50%, transparent)) {
+  .liquid-glass-nav {
+    background-color: color-mix(in oklab, #f4f1f1 32%, transparent);
+  }
+}
+
+/* Tactile button press physics */
+.tactile-btn {
+  transition: transform 90ms ease, filter 120ms ease;
+}
+.tactile-btn:active:not(:disabled) {
+  transform: translateY(2px);
+}
+
+/* Hide scrollbars inside mobile scroll regions while keeping scroll functional */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes pulseRing {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.14);
+    opacity: 0.2;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulseRing 2s ease-in-out infinite;
+}
+
+@keyframes slideUpSheet {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-sheet-up {
+  animation: slideUpSheet 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideLeftDrawer {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-drawer-left {
+  animation: slideLeftDrawer 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes caretBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.animate-caret {
+  animation: caretBlink 1s step-end infinite;
+}

@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Flag / France" clip-path="url(#clip0_0_13)">
+<path id="Vector" d="M32 24C32 25.9636 30.408 27.5556 28.4444 27.5556H21.3333V4.44444H28.4444C30.408 4.44444 32 6.03644 32 8V24Z" fill="#ED2939"/>
+<path id="Vector_2" d="M3.55556 4.44444C1.592 4.44444 0 6.03644 0 8V24C0 25.9636 1.592 27.5556 3.55556 27.5556H10.6667V4.44444H3.55556Z" fill="#002495"/>
+<path id="Vector_3" d="M10.6667 4.44444H21.3333V27.5556H10.6667V4.44444Z" fill="#EEEEEE"/>
+</g>
+<defs>
+<clipPath id="clip0_0_13">
+<rect width="32" height="32" fill="white"/>
+</clipPath>
+</defs>
+</svg>

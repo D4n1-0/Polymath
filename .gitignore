@@ -1,0 +1,26 @@
+# Dependencies & build output
+node_modules/
+dist/
+dist-ssr/
+*.tsbuildinfo
+
+# Logs & caches
+*.log
+npm-debug.log*
+.vite/
+
+# OS & AppleDouble resource forks (exFAT/macOS)
+.DS_Store
+._*
+**/.DS_Store
+**/._*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Editor directories
+.vscode/*
+!.vscode/extensions.json
+.idea/
