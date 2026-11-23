@@ -53,6 +53,16 @@ export interface MistakeVaultItem {
   explanation: string;
 }
 
+export interface OptionClue {
+  chip: string;
+  reason: string;
+}
+
+export interface Step2Breakdown {
+  ruleStrip: string;
+  message: string;
+}
+
 export interface FunctionQuestion {
   id: string;
   lessonTag: string;
@@ -62,10 +72,13 @@ export interface FunctionQuestion {
     rule: string;
     range: string;
   };
+  clueBannerTitle?: string;
   options: [string, string, string, string];
   correctIndex: number;
   explanation: string;
   wrongHint: string;
+  optionClues?: Partial<Record<number, OptionClue>>;
+  step2Breakdown?: Step2Breakdown;
 }
 
 export interface SpeedSprintQuestion {
@@ -75,6 +88,9 @@ export interface SpeedSprintQuestion {
   options: [string, string, string, string];
   correctIndex: number;
   explanation: string;
+  wrongHint: string;
+  optionClues?: Partial<Record<number, OptionClue>>;
+  step2Breakdown?: Step2Breakdown;
 }
 
 export interface AlgebraStageQuestion {
@@ -87,9 +103,11 @@ export interface AlgebraStageQuestion {
   mascotHintStep2: string;
   terms: {
     leftCoeffVar: string;
+    coeffDivisor: string;
     operator: '+' | '−';
     constant: string;
     rightValue: string;
+    reducedRight: string;
     inverseLabel: string;
     inverseOp: '+' | '−';
     transformedSummary: string;
@@ -97,6 +115,10 @@ export interface AlgebraStageQuestion {
   };
   expectedAnswer: string;
   explanation: string;
+  step1Hint: string;
+  step2Hint: string;
+  ruleStrip: string;
+  commonMistakes?: Record<string, { statusNote: string; reason: string }>;
 }
 
 export interface LessonNode {

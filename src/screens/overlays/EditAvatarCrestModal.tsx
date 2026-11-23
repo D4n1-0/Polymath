@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import userSvg from '../../assets/figma/overlay-user.svg';
 import crestVioletSvg from '../../assets/figma/997f6944-6d5c-43f8-8499-ee40798ea5f4.svg';
 import crestEmeraldSvg from '../../assets/figma/81e9d877-e361-48b5-b8c1-1793eadf4d98.svg';
 import crestAmberSvg from '../../assets/figma/153a5e87-a3c3-4007-9468-5c49774f3a48.svg';
@@ -37,7 +38,7 @@ export function EditAvatarCrestModal() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-[12px]">
             <div className="bg-[#f5f0ff] rounded-[12px] size-[40px] flex items-center justify-center">
-              <span className="font-space font-bold text-[18px] text-[#6b38d4]">👤</span>
+              <img alt="" src={userSvg} className="size-[26px]" />
             </div>
             <div>
               <h2 className="font-jakarta font-extrabold text-[18px] text-[#0f172a]">

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FocusShieldPill } from '../../components/ui/FocusShieldPill';
 import { GameAnswerOption, type AnswerOptionState } from '../../components/ui/GameAnswerOption';
 import { GameFeedbackBanner } from '../../components/ui/GameFeedbackBanner';
 import { FUNCTION_DRILL_QUESTIONS } from '../../data/questions';
@@ -7,14 +8,19 @@ import { useAppState } from '../../state/AppStateContext';
 const BADGES = ['A', 'B', 'C', 'D'];
 
 export function FunctionDrillScreen() {
-  const { focusShields, consumeFocusShield, finishGame, openOverlay, playTone } = useAppState();
+  const { consumeFocusShield, finishGame, openOverlay, playTone } = useAppState();
   const [qIndex, setQIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [verifiedState, setVerifiedState] = useState<'idle' | 'correct' | 'incorrect'>('idle');
   const [mistakesCount, setMistakesCount] = useState(0);
+  const [missedIndices, setMissedIndices] = useState<number[]>([]);
+  const [wrongAttemptsThisQ, setWrongAttemptsThisQ] = useState(0);
 
   const q = FUNCTION_DRILL_QUESTIONS[qIndex];
   const progressPct = Math.round(((qIndex + (verifiedState === 'correct' ? 1 : 0.35)) / FUNCTION_DRILL_QUESTIONS.length) * 100);
+  const hintStep: 1 | 2 = wrongAttemptsThisQ >= 2 ? 2 : 1;
+  const activeClue = selected !== null ? q.optionClues?.[selected] : undefined;
+  const showClueHighlight = verifiedState === 'incorrect' || missedIndices.length > 0;
 
   const handleCheck = () => {
     if (selected === null) return;
@@ -24,6 +30,8 @@ export function FunctionDrillScreen() {
     } else {
       playTone('wrong');
       setMistakesCount((c) => c + 1);
+      setWrongAttemptsThisQ((n) => n + 1);
+      setMissedIndices((prev) => (prev.includes(selected) ? prev : [...prev, selected]));
       consumeFocusShield();
       setVerifiedState('incorrect');
     }
@@ -42,6 +50,8 @@ export function FunctionDrillScreen() {
       setQIndex((i) => i + 1);
       setSelected(null);
       setVerifiedState('idle');
+      setMissedIndices([]);
+      setWrongAttemptsThisQ(0);
     } else {
       const accuracyPct = Math.max(70, Math.round(((FUNCTION_DRILL_QUESTIONS.length - mistakesCount * 0.5) / FUNCTION_DRILL_QUESTIONS.length) * 100));
       finishGame({
@@ -57,7 +67,7 @@ export function FunctionDrillScreen() {
 
   return (
     <div className="bg-[#faf8ff] flex flex-col justify-between h-full w-full px-[20px] safe-top safe-bottom overflow-y-auto scroll-contain no-scrollbar">
-      <div className="flex flex-col gap-[16px]">
+      <div className="flex flex-col gap-[12px]">
         {/* Game Top Chrome */}
         <div className="flex items-center gap-[12px] w-full">
           <button
@@ -79,11 +89,7 @@ export function FunctionDrillScreen() {
             />
           </div>
 
-          <div className="bg-[#ecfeff] border-[1.5px] border-[#06b6d4] rounded-full px-[10px] py-[6px] shrink-0">
-            <span className="font-space font-bold text-[12px] text-[#0e7490]">
-              🛡 {focusShields}/3
-            </span>
-          </div>
+          <FocusShieldPill />
         </div>
 
         <div className="flex items-center justify-between font-space font-bold text-[12px]">
@@ -93,43 +99,60 @@ export function FunctionDrillScreen() {
           </span>
         </div>
 
-        <h1 className="font-jakarta font-extrabold text-[22px] leading-[28px] text-[#0f172a]">
+        <h1 className="font-jakarta font-extrabold text-[20px] leading-[26px] text-[#0f172a]">
           {q.prompt}
         </h1>
 
         {/* Function Machine Visual */}
         {q.machine && (
-          <div className="bg-[#f5f0ff] border-[1.5px] border-[#d8c4fe] rounded-[18px] px-[16px] py-[14px] flex flex-col gap-[10px]">
-            <span className="font-space font-bold text-[12px] text-[#6b38d4]">
-              RULE CHECKER • EACH INPUT → EXACTLY 1 OUTPUT
+          <div
+            className={`border-[1.5px] rounded-[16px] px-[14px] py-[10px] flex flex-col gap-[8px] transition-colors ${
+              showClueHighlight
+                ? 'bg-[#fffbeb] border-[#f59e0b]'
+                : 'bg-[#f5f0ff] border-[#d8c4fe]'
+            }`}
+          >
+            <span
+              className={`font-space font-bold text-[11.5px] ${
+                showClueHighlight ? 'text-[#b45309]' : 'text-[#6b38d4]'
+              }`}
+            >
+              {showClueHighlight
+                ? hintStep >= 2
+                  ? 'STEP 2 GUIDE • CHECK EACH INPUT CAREFULLY'
+                  : q.clueBannerTitle ?? 'SPOT THE CLUE • EACH INPUT → EXACTLY 1 OUTPUT'
+                : 'RULE CHECKER • EACH INPUT → EXACTLY 1 OUTPUT'}
             </span>
             <div className="grid grid-cols-3 gap-[8px]">
-              <div className="bg-white rounded-[12px] px-[8px] py-[10px] text-center font-space font-bold text-[12px] text-[#0f172a]">
-                <p className="leading-[17px]">Domain (x)</p>
-                <p className="leading-[17px]">{q.machine.domain}</p>
+              <div className="bg-white rounded-[10px] px-[8px] py-[8px] text-center font-space font-bold text-[11.5px] text-[#0f172a]">
+                <p className="leading-[16px]">Domain (x)</p>
+                <p className="leading-[16px]">{q.machine.domain}</p>
               </div>
-              <div className="bg-[#6b38d4] rounded-[12px] px-[8px] py-[10px] text-center font-space font-bold text-[12px] text-white">
-                <p className="leading-[17px]">Rule f(x)</p>
-                <p className="leading-[17px]">{q.machine.rule}</p>
+              <div className="bg-[#6b38d4] rounded-[10px] px-[8px] py-[8px] text-center font-space font-bold text-[11.5px] text-white">
+                <p className="leading-[16px]">Rule f(x)</p>
+                <p className="leading-[16px]">{q.machine.rule}</p>
               </div>
-              <div className="bg-white rounded-[12px] px-[8px] py-[10px] text-center font-space font-bold text-[12px] text-[#006e2f]">
-                <p className="leading-[17px]">Range (y)</p>
-                <p className="leading-[17px]">{q.machine.range}</p>
+              <div className="bg-white rounded-[10px] px-[8px] py-[8px] text-center font-space font-bold text-[11.5px] text-[#006e2f]">
+                <p className="leading-[16px]">Range (y)</p>
+                <p className="leading-[16px]">{q.machine.range}</p>
               </div>
             </div>
           </div>
         )}
 
         {/* Answer Options */}
-        <div className="flex flex-col gap-[10px]">
+        <div className="flex flex-col gap-[8px]">
           {q.options.map((opt, idx) => {
+            const wasMissed = missedIndices.includes(idx);
             let optState: AnswerOptionState = 'default';
-            if (verifiedState === 'idle') {
-              if (selected === idx) optState = 'selected';
-            } else if (verifiedState === 'correct') {
+            if (verifiedState === 'correct') {
               if (idx === q.correctIndex) optState = 'correct';
+              else if (wasMissed) optState = 'incorrect';
             } else if (verifiedState === 'incorrect') {
-              if (selected === idx) optState = 'incorrect';
+              if (selected === idx || wasMissed) optState = 'incorrect';
+            } else {
+              if (selected === idx) optState = 'selected';
+              else if (wasMissed) optState = 'incorrect';
             }
 
             return (
@@ -138,7 +161,8 @@ export function FunctionDrillScreen() {
                 badge={BADGES[idx]}
                 optionText={opt}
                 state={optState}
-                disabled={verifiedState !== 'idle'}
+                clueChip={wasMissed ? q.optionClues?.[idx]?.chip : undefined}
+                disabled={verifiedState !== 'idle' || wasMissed}
                 onClick={() => {
                   playTone('tap');
                   setSelected(idx);
@@ -167,7 +191,28 @@ export function FunctionDrillScreen() {
         ) : (
           <GameFeedbackBanner
             state={verifiedState}
-            message={verifiedState === 'correct' ? q.explanation : q.wrongHint}
+            hintStep={hintStep}
+            coachLabel={
+              verifiedState === 'incorrect'
+                ? hintStep >= 2
+                  ? 'COACH POLY • STEP-BY-STEP'
+                  : selected !== null
+                    ? `COACH POLY • WHY ${BADGES[selected]} MISSED`
+                    : 'COACH POLY • HINT'
+                : undefined
+            }
+            ruleStrip={
+              verifiedState === 'incorrect' && hintStep >= 2
+                ? q.step2Breakdown?.ruleStrip
+                : undefined
+            }
+            message={
+              verifiedState === 'correct'
+                ? q.explanation
+                : activeClue?.reason ??
+                  (hintStep >= 2 ? q.step2Breakdown?.message : undefined) ??
+                  q.wrongHint
+            }
             onAction={handleBannerAction}
           />
         )}

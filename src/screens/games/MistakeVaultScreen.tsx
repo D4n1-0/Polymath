@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import shieldSvg from '../../assets/figma/72772994-62dc-412f-a353-9f7bf90c9bc1.svg';
 import { GameAnswerOption, type AnswerOptionState } from '../../components/ui/GameAnswerOption';
 import { GameFeedbackBanner } from '../../components/ui/GameFeedbackBanner';
 import { INITIAL_MISTAKE_VAULT } from '../../data/questions';
@@ -80,9 +81,10 @@ export function MistakeVaultScreen() {
             />
           </div>
 
-          <div className="bg-[#f5f0ff] border border-[#e2e8f0] rounded-full px-[10px] py-[6px] shrink-0">
-            <span className="font-space font-bold text-[12px] text-[#6b38d4]">
-              🛡 REPAIR {qIndex + 1}/{sessionItems.length}
+          <div className="bg-[#ecfeff] border-2 border-[#06b6d4] drop-shadow-[0px_2px_0px_#0891b2] rounded-full px-[10px] py-[6px] flex items-center gap-[5px] shrink-0">
+            <img alt="" src={shieldSvg} className="h-[14.5px] w-[11.8px]" />
+            <span className="font-space font-bold text-[12px] text-[#0e7490]">
+              REPAIR {qIndex + 1}/{sessionItems.length}
             </span>
           </div>
         </div>
@@ -150,8 +152,16 @@ export function MistakeVaultScreen() {
         ) : (
           <GameFeedbackBanner
             state={verifiedState}
-            title={verifiedState === 'correct' ? 'REPAIRED! +1 SHIELD RESTORED' : 'Check Coach Poly’s Hint'}
-            badgeText={verifiedState === 'correct' ? '🛡 HEALED' : 'TRY AGAIN'}
+            title={verifiedState === 'correct' ? 'REPAIRED! +1 SHIELD RESTORED' : undefined}
+            badgeText={
+              verifiedState === 'correct' ? (
+                <span className="inline-flex items-center gap-[5px]">
+                  <img alt="" src={shieldSvg} className="h-[13.5px] w-[11px]" />
+                  HEALED
+                </span>
+              ) : undefined
+            }
+            coachLabel={verifiedState === 'incorrect' ? 'COACH POLY • VAULT TIP' : undefined}
             message={verifiedState === 'correct' ? q.explanation : q.hint}
             onAction={handleBannerAction}
           />

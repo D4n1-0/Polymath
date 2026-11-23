@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import closeSvg from '../../assets/figma/4fb4b26f-dc71-4433-8809-ccbc8056900f.svg';
-import shieldSvg from '../../assets/figma/7ef9110d-466e-4538-abf4-26efa6e69e0d.svg';
+import { FocusShieldPill } from '../../components/ui/FocusShieldPill';
 import boltSmallSvg from '../../assets/figma/00c013b5-3af2-4df2-afc1-71768dbcf174.svg';
 import dragHandleSvg from '../../assets/figma/5d324ad8-e8ac-42f4-9875-642acb1c174d.svg';
 import arrowSmallSvg from '../../assets/figma/282bda7a-ef01-41f2-8e69-0765ba7747a8.svg';
@@ -18,15 +18,20 @@ const KEYPAD_ROWS = [
 ];
 
 export function AlgebraBalancingScreen() {
-  const { focusShields, consumeFocusShield, finishGame, openOverlay, playTone } = useAppState();
+  const { consumeFocusShield, finishGame, openOverlay, playTone } = useAppState();
   const [stageIdx, setStageIdx] = useState(0);
   const [constantMoved, setConstantMoved] = useState(true);
   const [inputVal, setInputVal] = useState('5');
   const [status, setStatus] = useState<'idle' | 'correct' | 'incorrect'>('idle');
   const [mistakes, setMistakes] = useState(0);
+  const [wrongAttemptsThisStage, setWrongAttemptsThisStage] = useState(0);
+  const [lastWrongVal, setLastWrongVal] = useState<string | null>(null);
 
   const stage = ALGEBRA_BALANCING_STAGES[stageIdx];
   const progressPct = Math.round(((stageIdx + (status === 'correct' ? 1 : 0.6)) / ALGEBRA_BALANCING_STAGES.length) * 100);
+  const isIncorrect = status === 'incorrect';
+  const hintStep: 1 | 2 = wrongAttemptsThisStage >= 2 ? 2 : 1;
+  const matchedMistake = lastWrongVal ? stage.commonMistakes?.[lastWrongVal] : undefined;
 
   const handleKeyPress = (key: string) => {
     if (status === 'correct') return;
@@ -41,13 +46,16 @@ export function AlgebraBalancingScreen() {
   };
 
   const handleCheck = () => {
-    if (!inputVal.trim()) return;
-    if (inputVal.trim() === stage.expectedAnswer) {
+    const trimmed = inputVal.trim();
+    if (!trimmed) return;
+    if (trimmed === stage.expectedAnswer) {
       playTone('correct');
       setStatus('correct');
     } else {
       playTone('wrong');
       setMistakes((m) => m + 1);
+      setWrongAttemptsThisStage((n) => n + 1);
+      setLastWrongVal(trimmed);
       consumeFocusShield();
       setStatus('incorrect');
     }
@@ -60,6 +68,8 @@ export function AlgebraBalancingScreen() {
       setConstantMoved(true);
       setInputVal('');
       setStatus('idle');
+      setWrongAttemptsThisStage(0);
+      setLastWrongVal(null);
     } else {
       finishGame({
         mode: 'algebra',
@@ -104,10 +114,7 @@ export function AlgebraBalancingScreen() {
             </div>
           </div>
 
-          <div className="bg-white border-2 border-[#cbc3d7] drop-shadow-[0px_3px_0px_#cbc3d7] rounded-full px-[12px] py-[7px] flex items-center gap-[5px] shrink-0">
-            <img alt="" src={shieldSvg} className="h-[14px] w-[11px]" />
-            <span className="font-space font-bold text-[12px] text-[#131b2e]">{focusShields}</span>
-          </div>
+          <FocusShieldPill />
         </div>
 
         {/* Prompt + Mascot Hint */}
@@ -117,10 +124,28 @@ export function AlgebraBalancingScreen() {
             <span className="font-space text-[#6b38d4]">{stage.highlightVar}</span>
             {stage.promptSuffix}
           </h1>
-          <div className="bg-[#f2f3ff] border-2 border-[#cbc3d7]/70 rounded-[14px] p-[8px]">
-            <div className="bg-white border border-[#cbc3d7] rounded-[10px] px-[12px] py-[6px]">
-              <p className="font-jakarta font-semibold text-[13.5px] text-[#131b2e]">
-                {constantMoved ? stage.mascotHintStep2 : stage.mascotHintStep1}
+          <div
+            className={`border-2 rounded-[14px] p-[8px] transition-colors ${
+              isIncorrect
+                ? 'bg-[#fffbeb] border-[#f59e0b]'
+                : 'bg-[#f2f3ff] border-[#cbc3d7]/70'
+            }`}
+          >
+            <div
+              className={`bg-white border rounded-[10px] px-[12px] py-[6px] ${
+                isIncorrect ? 'border-[#fde68a]' : 'border-[#cbc3d7]'
+              }`}
+            >
+              <p
+                className={`font-jakarta font-semibold text-[13.5px] ${
+                  isIncorrect ? 'text-[#92400e]' : 'text-[#131b2e]'
+                }`}
+              >
+                {isIncorrect
+                  ? `Almost! Divide both sides of ${stage.terms.reducedEquation} by ${stage.terms.coeffDivisor} to isolate ${stage.highlightVar}.`
+                  : constantMoved
+                    ? stage.mascotHintStep2
+                    : stage.mascotHintStep1}
               </p>
             </div>
           </div>
@@ -133,7 +158,7 @@ export function AlgebraBalancingScreen() {
               'linear-gradient(90deg, rgba(203,195,215,0.22) 6.25%, transparent 6.25%), linear-gradient(180deg, rgba(203,195,215,0.22) 6.25%, transparent 6.25%), linear-gradient(90deg, #fff 0%, #fff 100%)',
             backgroundSize: '20px 20px',
           }}
-          className="border-2 border-[#cbc3d7] rounded-[22px] p-[14px] shadow-[0px_4px_0px_0px_#cbc3d7] flex flex-col gap-[10px]"
+          className="border-2 border-[#cbc3d7] rounded-[20px] p-[12px] shadow-[0px_4px_0px_0px_#cbc3d7] flex flex-col gap-[8px]"
         >
           <div className="flex items-center justify-between">
             <span className="bg-[#eaedff] border border-[#cbc3d7]/50 rounded-[6px] px-[10px] py-[2px] font-space font-bold text-[11px] text-[#6b38d4]">
@@ -162,7 +187,11 @@ export function AlgebraBalancingScreen() {
               playTone('tap');
               setConstantMoved((m) => !m);
             }}
-            className="bg-[#f2f3ff] border-2 border-[#cbc3d7]/60 rounded-[12px] p-[10px] flex flex-col gap-[6px] text-left cursor-pointer"
+            className={`border-2 rounded-[12px] p-[10px] flex flex-col gap-[6px] text-left cursor-pointer transition-all ${
+              isIncorrect
+                ? 'bg-[#fffbeb] border-[#f59e0b] shadow-[0px_3px_0px_0px_rgba(245,158,11,0.35)]'
+                : 'bg-[#f2f3ff] border-[#cbc3d7]/60'
+            }`}
           >
             <div className="flex items-center justify-between w-full font-space font-bold text-[11.5px]">
               <span className="text-[#131b2e]">TRANSFORMATION STAGE</span>
@@ -190,31 +219,70 @@ export function AlgebraBalancingScreen() {
               )}
             </div>
 
-            <div className="bg-white border border-[#cbc3d7] rounded-[8px] px-[12px] py-[5px] flex items-center gap-[6px] font-space font-bold text-[12px]">
-              <span className="text-[#494454]">{stage.terms.transformedSummary}</span>
-              <img alt="" src={arrowSmallSvg} className="size-[11px]" />
-              <span className="text-[#6b38d4]">{stage.terms.reducedEquation}</span>
+            <div
+              className={`bg-white border rounded-[8px] px-[10px] py-[5px] flex items-center justify-between gap-[6px] font-space font-bold text-[12px] ${
+                isIncorrect ? 'border-[#f59e0b]' : 'border-[#cbc3d7]'
+              }`}
+            >
+              {isIncorrect ? (
+                <>
+                  <span className="text-[#6b38d4]">{stage.terms.reducedEquation}</span>
+                  <span className="bg-[#fef3c7] border border-[#f59e0b] shadow-[0_0_0_2px_rgba(245,158,11,0.2)] rounded-[6px] px-[8px] py-[2px] text-[11px] text-[#92400e]">
+                    ÷ {stage.terms.coeffDivisor} both sides → x = {stage.terms.reducedRight} ÷ {stage.terms.coeffDivisor}
+                  </span>
+                </>
+              ) : (
+                <div className="flex items-center gap-[6px]">
+                  <span className="text-[#494454]">{stage.terms.transformedSummary}</span>
+                  <img alt="" src={arrowSmallSvg} className="size-[11px]" />
+                  <span className="text-[#6b38d4]">{stage.terms.reducedEquation}</span>
+                </div>
+              )}
             </div>
           </button>
 
           {/* Target Input Result Preview */}
-          <div className="bg-[#eaedff] border-2 border-[#cbc3d7] rounded-[12px] px-[14px] py-[8px] flex items-center justify-between">
+          <div
+            className={`border-2 rounded-[12px] px-[14px] py-[8px] flex items-center justify-between transition-colors ${
+              isIncorrect
+                ? 'bg-[#fffbeb] border-[#f59e0b]'
+                : 'bg-[#eaedff] border-[#cbc3d7]'
+            }`}
+          >
             <div className="flex items-center gap-[8px]">
               <span className="font-space font-bold text-[18px] text-[#131b2e]">x =</span>
-              <div className="bg-white border-2 border-[#6b38d4] rounded-[8px] px-[16px] py-[5px] min-w-[54px] flex items-center justify-center gap-[3px] shadow-[inset_0px_2px_0px_0px_#cbc3d7]">
-                <span className="font-space font-bold text-[16px] text-[#6b38d4]">
+              <div
+                className={`bg-white border-2 rounded-[8px] px-[16px] py-[5px] min-w-[54px] flex items-center justify-center gap-[3px] shadow-[inset_0px_2px_0px_0px_#cbc3d7] ${
+                  isIncorrect ? 'border-[#f59e0b]' : 'border-[#6b38d4]'
+                }`}
+              >
+                <span
+                  className={`font-space font-bold text-[16px] ${
+                    isIncorrect ? 'text-[#b45309]' : 'text-[#6b38d4]'
+                  }`}
+                >
                   {inputVal || '\u00A0'}
                 </span>
-                <span className="bg-[#6b38d4] h-[16px] w-[2px] animate-caret" />
+                <span
+                  className={`h-[16px] w-[2px] animate-caret ${
+                    isIncorrect ? 'bg-[#f59e0b]' : 'bg-[#6b38d4]'
+                  }`}
+                />
               </div>
             </div>
 
-            <div className="flex items-center gap-[4px]">
-              <img alt="" src={readyCheckSvg} className="size-[13px]" />
-              <span className="font-space font-bold text-[12px] text-[#006e2f]">
-                {inputVal ? 'Ready to test' : 'Enter value'}
+            {isIncorrect ? (
+              <span className="font-space font-bold text-[11.5px] text-[#dc2626]">
+                {matchedMistake?.statusNote ?? `✕ ${lastWrongVal ?? inputVal} ≠ ${stage.terms.reducedRight} ÷ ${stage.terms.coeffDivisor}`}
               </span>
-            </div>
+            ) : (
+              <div className="flex items-center gap-[4px]">
+                <img alt="" src={readyCheckSvg} className="size-[13px]" />
+                <span className="font-space font-bold text-[12px] text-[#006e2f]">
+                  {inputVal ? 'Ready to test' : 'Enter value'}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -228,7 +296,7 @@ export function AlgebraBalancingScreen() {
                 key={k}
                 type="button"
                 onClick={() => handleKeyPress(k)}
-                className={`tactile-btn h-[42px] rounded-[12px] border-2 font-space font-bold text-[14px] flex items-center justify-center cursor-pointer ${
+                className={`tactile-btn h-[38px] rounded-[12px] border-2 font-space font-bold text-[14px] flex items-center justify-center cursor-pointer ${
                   isActiveHighlight
                     ? 'bg-[#8455ef] border-[#6b38d4] drop-shadow-[0px_4px_0px_#5516be] text-white'
                     : isOperator
@@ -261,11 +329,26 @@ export function AlgebraBalancingScreen() {
           </div>
         )}
 
-        {status === 'incorrect' && (
-          <div className="animate-sheet-up bg-[#fef2f2] border-2 border-[#dc2626] rounded-[16px] p-[10px] flex items-center justify-between gap-[10px]">
-            <p className="font-jakarta font-semibold text-[12.5px] text-[#b91c1c]">
-              Not quite! Solve {stage.terms.reducedEquation} for x (−1 Shield).
+        {isIncorrect && (
+          <div className="animate-sheet-up bg-[#fffbeb] border-[1.5px] border-[#f59e0b] rounded-[14px] px-[12px] py-[9px] flex flex-col gap-[4px]">
+            <div className="flex items-center justify-between gap-[8px]">
+              <p className="font-jakarta font-extrabold text-[13.5px] text-[#92400e]">
+                {hintStep >= 2
+                  ? 'Let’s break it down together'
+                  : 'Almost! Let’s look at the rule together'}
+              </p>
+              <span className="bg-white border border-[#fcd34d] rounded-full px-[8px] py-[2px] font-space font-bold text-[10px] text-[#b45309] whitespace-nowrap">
+                {hintStep >= 2 ? 'STEP 2 • BREAKDOWN' : 'STEP 1 • NUDGE'}
+              </span>
+            </div>
+            <p className="font-jakarta font-semibold text-[12px] leading-[16px] text-[#78350f]">
+              {matchedMistake?.reason ?? (hintStep >= 2 ? stage.step2Hint : stage.step1Hint)}
             </p>
+            {hintStep >= 2 && (
+              <p className="bg-[#f5f0ff] border border-[#d8c4fe] rounded-[8px] px-[8px] py-[4px] font-space font-bold text-[11px] text-[#6b38d4]">
+                {stage.ruleStrip}
+              </p>
+            )}
           </div>
         )}
 
@@ -277,6 +360,17 @@ export function AlgebraBalancingScreen() {
           >
             CONTINUE →
           </button>
+        ) : isIncorrect ? (
+          <button
+          type="button"
+          onClick={() => {
+            playTone('tap');
+            setStatus('idle');
+          }}
+          className="tactile-btn bg-[#d97706] border-2 border-[#b45309] drop-shadow-[0px_4px_0px_#92400e] h-[46px] rounded-[16px] font-jakarta font-bold text-[15.5px] tracking-[0.8px] uppercase text-white cursor-pointer"
+        >
+          GOT IT — ADJUST ANSWER
+        </button>
         ) : (
           <button
             type="button"

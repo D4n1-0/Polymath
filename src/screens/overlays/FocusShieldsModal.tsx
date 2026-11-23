@@ -1,3 +1,4 @@
+import shieldSvg from '../../assets/figma/72772994-62dc-412f-a353-9f7bf90c9bc1.svg';
 import { useAppState } from '../../state/AppStateContext';
 
 export function FocusShieldsModal() {
@@ -19,7 +20,7 @@ export function FocusShieldsModal() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-[12px]">
             <div className="bg-[#ecfeff] rounded-[12px] size-[40px] flex items-center justify-center">
-              <span className="font-space font-bold text-[18px] text-[#0e7490]">🛡</span>
+              <img alt="" src={shieldSvg} className="h-[24px] w-[19.5px]" />
             </div>
             <div>
               <h2 className="font-jakarta font-extrabold text-[18px] text-[#0f172a]">

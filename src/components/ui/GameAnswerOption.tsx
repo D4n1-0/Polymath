@@ -4,6 +4,7 @@ interface GameAnswerOptionProps {
   badge: string;
   optionText: string;
   state?: AnswerOptionState;
+  clueChip?: string;
   onClick?: () => void;
   disabled?: boolean;
   compact?: boolean;
@@ -13,6 +14,7 @@ export function GameAnswerOption({
   badge,
   optionText,
   state = 'default',
+  clueChip,
   onClick,
   disabled = false,
   compact = false,
@@ -25,7 +27,7 @@ export function GameAnswerOption({
       : state === 'correct'
         ? 'bg-[#ecfdf5] border-2 border-[#006e2f] drop-shadow-[0px_3px_0px_rgba(0,110,47,0.9)]'
         : state === 'incorrect'
-          ? 'bg-[#fef2f2] border-2 border-[#dc2626] drop-shadow-[0px_3px_0px_rgba(220,38,38,0.9)]'
+          ? 'bg-[#fffbeb] border-[1.5px] border-[#f59e0b] drop-shadow-[0px_3px_0px_rgba(245,158,11,0.25)]'
           : 'bg-white border-[1.5px] border-[#e2e8f0] drop-shadow-[0px_3px_0px_rgba(226,232,240,0.6)] hover:border-[#cbc3d7]';
 
   const badgeStyle =
@@ -34,7 +36,7 @@ export function GameAnswerOption({
       : state === 'correct'
         ? 'bg-[#006e2f] text-white'
         : state === 'incorrect'
-          ? 'bg-[#dc2626] text-white'
+          ? 'bg-[#fef2f2] border border-[#fecaca] text-[#dc2626]'
           : 'bg-[#f1f5f9] text-[#334155]';
 
   const textStyle =
@@ -43,7 +45,7 @@ export function GameAnswerOption({
       : state === 'correct'
         ? 'text-[#006e2f]'
         : state === 'incorrect'
-          ? 'text-[#b91c1c]'
+          ? 'text-[#78350f]'
           : 'text-[#0f172a]';
 
   return (
@@ -51,7 +53,7 @@ export function GameAnswerOption({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`tactile-btn w-full flex items-center gap-[12px] ${compact ? 'px-[12px] py-[12px]' : 'px-[16px] py-[14px]'} rounded-[16px] border-solid text-left cursor-pointer disabled:cursor-default ${containerStyle}`}
+      className={`tactile-btn w-full flex items-center gap-[12px] ${compact ? 'px-[12px] py-[11px]' : 'px-[15px] py-[11px]'} rounded-[16px] border-solid text-left cursor-pointer disabled:cursor-default ${containerStyle}`}
     >
       <div
         className={`size-[34px] rounded-[10px] flex items-center justify-center shrink-0 ${badgeStyle}`}
@@ -63,6 +65,11 @@ export function GameAnswerOption({
       >
         {optionText}
       </span>
+      {state === 'incorrect' && clueChip && (
+        <span className="bg-[#fef3c7] border border-[#f59e0b] rounded-full px-[8px] py-[3px] font-space font-bold text-[11px] text-[#92400e] whitespace-nowrap shrink-0">
+          {clueChip}
+        </span>
+      )}
     </button>
   );
 }

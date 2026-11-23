@@ -21,7 +21,7 @@ export function DailyStreakModal() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-[12px]">
             <div className="bg-[#fff9e6] rounded-[12px] size-[40px] flex items-center justify-center">
-              <span className="font-space font-bold text-[18px] text-[#9a4a00]">🔥</span>
+              <span className="font-space font-bold text-[28px] leading-none text-[#9a4a00]">🔥</span>
             </div>
             <div>
               <h2 className="font-jakarta font-extrabold text-[18px] text-[#0f172a]">

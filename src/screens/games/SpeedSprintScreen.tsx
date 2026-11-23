@@ -14,6 +14,8 @@ export function SpeedSprintScreen() {
   const [combo, setCombo] = useState(3);
   const [elapsedMs, setElapsedMs] = useState(0);
   const [mistakes, setMistakes] = useState(0);
+  const [missedIndices, setMissedIndices] = useState<number[]>([]);
+  const [wrongAttemptsThisQ, setWrongAttemptsThisQ] = useState(0);
 
   useEffect(() => {
     if (overlay === 'pause-exit') return;
@@ -27,6 +29,8 @@ export function SpeedSprintScreen() {
   const progressPct = Math.round(((qIndex + (verifiedState === 'correct' ? 1 : 0.25)) / SPEED_SPRINT_QUESTIONS.length) * 100);
   const elapsedSec = elapsedMs / 1000;
   const formattedTime = `00:${elapsedSec.toFixed(1).padStart(4, '0')}`;
+  const hintStep: 1 | 2 = wrongAttemptsThisQ >= 2 ? 2 : 1;
+  const activeClue = selected !== null ? q.optionClues?.[selected] : undefined;
 
   const handleLockIn = () => {
     if (selected === null) return;
@@ -38,6 +42,8 @@ export function SpeedSprintScreen() {
       playTone('wrong');
       setCombo(1);
       setMistakes((m) => m + 1);
+      setWrongAttemptsThisQ((n) => n + 1);
+      setMissedIndices((prev) => (prev.includes(selected) ? prev : [...prev, selected]));
       setVerifiedState('incorrect');
     }
   };
@@ -55,6 +61,8 @@ export function SpeedSprintScreen() {
       setQIndex((i) => i + 1);
       setSelected(null);
       setVerifiedState('idle');
+      setMissedIndices([]);
+      setWrongAttemptsThisQ(0);
     } else {
       const finalSec = Math.max(8.4, Number(elapsedSec.toFixed(1)));
       finishGame({
@@ -128,13 +136,16 @@ export function SpeedSprintScreen() {
         {/* 2x2 Options Grid */}
         <div className="grid grid-cols-2 gap-[12px]">
           {q.options.map((opt, idx) => {
+            const wasMissed = missedIndices.includes(idx);
             let optState: AnswerOptionState = 'default';
-            if (verifiedState === 'idle') {
-              if (selected === idx) optState = 'selected';
-            } else if (verifiedState === 'correct') {
+            if (verifiedState === 'correct') {
               if (idx === q.correctIndex) optState = 'correct';
+              else if (wasMissed) optState = 'incorrect';
             } else if (verifiedState === 'incorrect') {
-              if (selected === idx) optState = 'incorrect';
+              if (selected === idx || wasMissed) optState = 'incorrect';
+            } else {
+              if (selected === idx) optState = 'selected';
+              else if (wasMissed) optState = 'incorrect';
             }
 
             return (
@@ -144,7 +155,7 @@ export function SpeedSprintScreen() {
                 badge={BADGES[idx]}
                 optionText={opt}
                 state={optState}
-                disabled={verifiedState !== 'idle'}
+                disabled={verifiedState !== 'idle' || wasMissed}
                 onClick={() => {
                   playTone('tap');
                   setSelected(idx);
@@ -172,12 +183,35 @@ export function SpeedSprintScreen() {
         ) : (
           <GameFeedbackBanner
             state={verifiedState}
-            title={verifiedState === 'correct' ? `FAST SOLVE! ×${combo} COMBO` : 'Missed — Reset Combo'}
-            badgeText={verifiedState === 'correct' ? '+20 XP' : 'RETRY'}
+            hintStep={hintStep}
+            title={verifiedState === 'correct' ? `FAST SOLVE! ×${combo} COMBO` : undefined}
+            badgeText={
+              verifiedState === 'correct'
+                ? '+20 XP'
+                : hintStep >= 2
+                  ? 'STEP 2 • BREAKDOWN'
+                  : 'COMBO ×1 • NUDGE'
+            }
+            coachLabel={
+              verifiedState === 'incorrect'
+                ? hintStep >= 2
+                  ? 'COACH POLY • STEP-BY-STEP'
+                  : selected !== null
+                    ? `COACH POLY • WHY ${BADGES[selected]} MISSED`
+                    : 'COACH POLY • HINT'
+                : undefined
+            }
+            ruleStrip={
+              verifiedState === 'incorrect' && hintStep >= 2
+                ? q.step2Breakdown?.ruleStrip
+                : undefined
+            }
             message={
               verifiedState === 'correct'
                 ? q.explanation
-                : 'Check the inverse operation order and try locking in again.'
+                : activeClue?.reason ??
+                  (hintStep >= 2 ? q.step2Breakdown?.message : undefined) ??
+                  q.wrongHint
             }
             onAction={handleBannerAction}
           />

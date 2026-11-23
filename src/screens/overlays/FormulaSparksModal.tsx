@@ -1,3 +1,4 @@
+import zapSvg from '../../assets/figma/overlay-zap.svg';
 import { useAppState } from '../../state/AppStateContext';
 
 export function FormulaSparksModal() {
@@ -26,7 +27,7 @@ export function FormulaSparksModal() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-[12px]">
             <div className="bg-[#f5f0ff] rounded-[12px] size-[40px] flex items-center justify-center">
-              <span className="font-space font-bold text-[18px] text-[#6b38d4]">⚡</span>
+              <img alt="" src={zapSvg} className="size-[26px]" />
             </div>
             <div>
               <h2 className="font-jakarta font-extrabold text-[18px] text-[#0f172a]">

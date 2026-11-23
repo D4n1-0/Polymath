@@ -1,6 +1,6 @@
 import React from 'react';
-import shieldSvg from '../../assets/figma/72772994-62dc-412f-a353-9f7bf90c9bc1.svg';
 import flameSvg from '../../assets/figma/6de10c9b-fc0b-4ad8-a747-686e6bfe7272.svg';
+import { FocusShieldPill } from '../ui/FocusShieldPill';
 import boltSvg from '../../assets/figma/2309e7bd-e388-4fe9-a7d6-38b4a77629f2.svg';
 import settingsGearSvg from '../../assets/figma/df00338f-91ad-4b9d-a32a-b73cca195381.svg';
 
@@ -24,7 +24,6 @@ interface AppShellProps {
 
 export function AppShell({ activeTab, children }: AppShellProps) {
   const {
-    focusShields,
     dailyStreak,
     formulaSparks,
     navigate,
@@ -70,19 +69,7 @@ export function AppShell({ activeTab, children }: AppShellProps) {
           </button>
         ) : (
           <div className="flex items-center gap-[6px]">
-            <button
-              type="button"
-              onClick={() => {
-                playTone('tap');
-                openOverlay('hud-shields');
-              }}
-              className="tactile-btn bg-[#ecfeff] border-2 border-[#06b6d4] drop-shadow-[0px_2px_0px_#0891b2] h-[40px] px-[10px] rounded-full flex items-center gap-[4px] cursor-pointer"
-            >
-              <img alt="" src={shieldSvg} className="h-[14px] w-[12px]" />
-              <span className="font-space font-bold text-[12px] tracking-[0.6px] text-[#0e7490]">
-                {focusShields}/3
-              </span>
-            </button>
+            <FocusShieldPill />
             <button
               type="button"
               onClick={() => {

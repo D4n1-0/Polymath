@@ -1,3 +1,4 @@
+import awardSvg from '../../assets/figma/overlay-award.svg';
 import { ALL_BADGES } from '../../data/badges';
 import { useAppState } from '../../state/AppStateContext';
 
@@ -21,7 +22,7 @@ export function AllBadgesScreen() {
         <div className="flex items-center justify-between shrink-0">
           <div className="flex items-center gap-[12px]">
             <div className="bg-[#f5f0ff] rounded-[12px] size-[40px] flex items-center justify-center">
-              <span className="font-space font-bold text-[18px] text-[#6b38d4]">🏆</span>
+              <img alt="" src={awardSvg} className="size-[26px]" />
             </div>
             <div>
               <h2 className="font-jakarta font-extrabold text-[18px] text-[#0f172a]">
