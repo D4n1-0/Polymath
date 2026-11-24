@@ -11,7 +11,7 @@ export function RegisterMethodScreen() {
   return (
     <div className="bg-white flex flex-col justify-between h-full w-full px-[20px] safe-top safe-bottom overflow-y-auto scroll-contain no-scrollbar">
       <div className="flex flex-col gap-[10px]">
-        <AuthHeader onBack={() => navigate('login')} />
+        <AuthHeader />
 
         <h1 className="font-jakarta font-extrabold text-[30px] tracking-[-0.75px] leading-[36px] text-[#131b2e]">
           Register
